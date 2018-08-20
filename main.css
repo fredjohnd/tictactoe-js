@@ -1,11 +1,35 @@
 .container {
     height: 100%;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: #5ea2a5;
 }
 
+.side {
+    width: 33%;
+    height: 100%;
+    font-family: 'Nunito', sans-serif;
+    font-size: 50px;
+    color: #fff;
+}
+
+.side-left {
+    text-align: right;
+}
+
+.side-right {
+    text-align: left;
+}
+
+.side-content[current-play="true"] {
+    border-bottom: 5px solid green;
+}
+
+.badge {
+    margin-right: 20px;
+}
 .board {
     display: flex;
     flex-direction: column;
@@ -19,12 +43,17 @@
 .entry {
     width: 150px;
     height: 150px;
-}
-
-.entry:hover {
-    background-color: #95bcbd;
     cursor: pointer;
 }
+
+.entry[is-played] {
+    cursor: default;
+}
+
+.entry:hover:not([is-played]) {
+    background-color: #95bcbd;
+}
+
 .row .entry {
     display: flex;
     justify-content: center;

@@ -11,14 +11,15 @@
 </head>
 <body>
     <div class="container">
+        <div class="side side-left"><span class="side-content" data-player="0"><span class="badge badge-cross">X</span> Player 1</span></div>
         <main class="board">
             <div class="row row-1">
-                <div class="entry entry-1"><span class="option option-cross">X</span></div>
+                <div class="entry entry-1"></div>
                 <div class="entry entry-2"></div>
                 <div class="entry entry-3"></div>
             </div>
             <div class="row row-2">
-                <div class="entry entry-1"><span class="option option-circle">O</span></div>
+                <div class="entry entry-1"></div>
                 <div class="entry entry-2"></div>
                 <div class="entry entry-3"></div>
             </div>
@@ -28,9 +29,13 @@
                 <div class="entry entry-3"></div>
             </div>
         </main>
-    </div>
 
-    <span class="option option-cross">X</span>
-    <span class="option option-circle">O</span>
+        <div class="side side-right"><span class="side-content" data-player="1"><span class="badge badge-circle">O</span> Player 2</span></div>
+    </div>
+    
+    <div class="elements">
+        <span class="option option-cross">X</span>
+        <span class="option option-circle">O</span>
+    </div>
 </body>
 </html>
