@@ -1,0 +1,51 @@
+.container {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #5ea2a5;
+}
+
+.board {
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    flex: 1 1 auto;
+    display: flex;
+}
+
+.entry {
+    width: 150px;
+    height: 150px;
+}
+
+.entry:hover {
+    background-color: #95bcbd;
+    cursor: pointer;
+}
+.row .entry {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 2px;
+    border-bottom: 8px solid #fff;
+    border-right: 8px solid #fff;
+}
+
+/* Remove right borders for the right squares of each row */
+.row .entry:last-of-type {
+    border-right: none;
+}
+
+/* Remove bottom borders for the bottom squares */
+.row:last-of-type .entry {
+    border-bottom: none;
+}
+
+.option {
+    font-family: 'Nunito', sans-serif;
+    font-size: 100px;
+    color: #fff;
+}
