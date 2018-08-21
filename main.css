@@ -12,7 +12,7 @@
     height: 100%;
     font-family: 'Nunito', sans-serif;
     font-size: 50px;
-    color: #fff;
+    color: #cbcbcb;
 }
 
 .side-left {
@@ -24,9 +24,20 @@
 }
 
 .side-content[current-play="true"] {
-    border-bottom: 5px solid green;
+    border-bottom: 5px solid white;
+    color: #fff;
 }
 
+.replay {
+    display: none;
+    margin-top: 40px;
+    color: #fff;
+    cursor: pointer;
+}
+
+.replay.show {
+    display: block;
+}
 .badge {
     margin-right: 20px;
 }
@@ -46,11 +57,11 @@
     cursor: pointer;
 }
 
-.entry[is-played] {
+.entry[is-played="true"] {
     cursor: default;
 }
 
-.entry:hover:not([is-played]) {
+.entry:hover:not([is-played="true"]) {
     background-color: #95bcbd;
 }
 
@@ -61,6 +72,7 @@
     border-radius: 2px;
     border-bottom: 8px solid #fff;
     border-right: 8px solid #fff;
+    user-select: none;
 }
 
 /* Remove right borders for the right squares of each row */
@@ -77,4 +89,5 @@
     font-family: 'Nunito', sans-serif;
     font-size: 100px;
     color: #fff;
+    user-select: none;
 }
