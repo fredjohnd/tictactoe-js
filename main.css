@@ -13,14 +13,7 @@
     font-family: 'Nunito', sans-serif;
     font-size: 50px;
     color: #cbcbcb;
-}
-
-.side-left {
-    text-align: right;
-}
-
-.side-right {
-    text-align: left;
+    text-align: center;
 }
 
 .side-content[current-play="true"] {
@@ -65,6 +58,10 @@
     background-color: #95bcbd;
 }
 
+.entry--highlighted span {
+    color: greenyellow;
+}
+
 .row .entry {
     display: flex;
     justify-content: center;
@@ -83,6 +80,13 @@
 /* Remove bottom borders for the bottom squares */
 .row:last-of-type .entry {
     border-bottom: none;
+}
+
+.score {
+    color: #fff;
+}
+.elements {
+    display: none;
 }
 
 .option {

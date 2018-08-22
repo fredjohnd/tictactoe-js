@@ -94,7 +94,7 @@ class TicTacToe {
         const line = wins[i];
         if(isWinner(line)) {
             this.winner = this.playerTurn;
-            this.finishGame();
+            this.finishGame(line);
             break;
         }
     }
@@ -106,9 +106,14 @@ class TicTacToe {
   }
   
 
-  finishGame() {
+  finishGame(winningLine) {
       if (this.winner !== null) {
-          alert('Winner is ' + this.playerNames[this.playerTurn]);
+          const winnerHeader = document.querySelector(`.score-${this.winner}`);
+          if (winnerHeader) {
+              winnerHeader.innerText = parseInt(winnerHeader.textContent, 10) + 1;
+              const entries = this.getEntriesForLine(winningLine);
+              entries.forEach(e => e.classList.add('entry--highlighted'));
+          }
       } else {
           alert('No winner');
       }
@@ -130,6 +135,7 @@ class TicTacToe {
 
       Array.from(document.querySelectorAll('.board .entry')).forEach(entry => {
         this.setIsEntryPlayed(entry, 'false');
+        entry.classList.remove('entry--highlighted');
       });
   }
 
@@ -139,6 +145,12 @@ class TicTacToe {
 
   setIsEntryPlayed(entry, value) {
     entry.setAttribute('is-played', value);
+  }
+
+  getEntriesForLine(line) {
+    return line.map(l => {
+        return document.querySelector(`.entry-${l}`);
+    });
   }
   
 }
