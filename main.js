@@ -51,7 +51,7 @@ class TicTacToe {
   nextPlayer() {
 
     this.playerTurn = this.playerTurn === this.players.CROSS ? this.players.CIRCLE : this.players.CROSS;
-    const sides = document.querySelectorAll('.side-content');
+    const sides = document.querySelectorAll('.scoreboard-content');
     Array.from(sides).forEach(side => {
       side.setAttribute('current-play', false);
       if (parseInt(side.getAttribute('data-player'), 10) === this.playerTurn) {
@@ -98,6 +98,8 @@ class TicTacToe {
             break;
         }
     }
+
+    if (this.winner !== null) return false;
 
     if (this.model.filter(entry => entry === 0 || entry === 1).length === 9) {
         this.finishGame();

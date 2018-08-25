@@ -1,46 +1,57 @@
+body {
+    background-color: #5ea2a5;
+}
+
 .container {
     height: 100%;
     width: 100%;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #5ea2a5;
+    flex-direction: column;
+    
 }
 
-.side {
-    width: 33%;
-    height: 100%;
+.scoreboard {
+    display: flex;
+    justify-content: space-around;
     font-family: 'Nunito', sans-serif;
     font-size: 50px;
     color: #cbcbcb;
     text-align: center;
 }
 
-.side-content[current-play="true"] {
+.scoreboard-content[current-play="true"] {
     border-bottom: 5px solid white;
     color: #fff;
 }
 
+.badge {
+    margin-right: 20px;
+}
+
+.scoreboard-score {
+    color: #fff;
+    margin-bottom: 0;
+}
+
 .replay {
-    display: none;
+    visibility: hidden;
     margin-top: 40px;
     color: #fff;
     cursor: pointer;
 }
 
 .replay.show {
-    display: block;
+    visibility: visible;
 }
-.badge {
-    margin-right: 20px;
-}
+
 .board {
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 .row {
-    flex: 1 1 auto;
+    flex: 0 0 auto;
     display: flex;
 }
 
@@ -82,9 +93,7 @@
     border-bottom: none;
 }
 
-.score {
-    color: #fff;
-}
+
 .elements {
     display: none;
 }
@@ -101,7 +110,7 @@
     .side {
         font-size: 20px;
     }
-    
+
     .entry {
         width: 75px;
         height: 75px;
