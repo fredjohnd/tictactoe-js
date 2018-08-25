@@ -10,7 +10,7 @@ body {
     
 }
 
-.scoreboard {
+.header {
     display: flex;
     justify-content: space-around;
     font-family: 'Nunito', sans-serif;
@@ -107,7 +107,7 @@ body {
 
 @media(max-width: 768px) {
 
-    .side {
+    .scoreboard {
         font-size: 20px;
     }
 
