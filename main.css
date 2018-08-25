@@ -95,3 +95,19 @@
     color: #fff;
     user-select: none;
 }
+
+@media(max-width: 768px) {
+
+    .side {
+        font-size: 20px;
+    }
+    
+    .entry {
+        width: 75px;
+        height: 75px;
+    }
+
+    .option {
+        font-size: 40px;
+    }
+}

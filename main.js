@@ -114,8 +114,6 @@ class TicTacToe {
               const entries = this.getEntriesForLine(winningLine);
               entries.forEach(e => e.classList.add('entry--highlighted'));
           }
-      } else {
-          alert('No winner');
       }
 
       document.querySelector('.replay').classList.add('show');
