@@ -8,20 +8,48 @@ class TicTacToe {
 
     // Set default values
     this.winner = null;
+    this.playerId = null;
+
     this.entries = this.createEntries();
     
     this.elements = this.getPlayerElements();
     
+    this.openSession();
 
     this.setEventHandlers();
     this.setPlayerTypes();
     this.nextPlayer();
+
     
     this.winningPatterns = [
       [0, 1, 2], [3, 4, 5], [6, 7, 8],
       [0, 3, 6], [1, 4, 7], [2, 5, 8],
       [0, 4, 8], [2, 4,6]
     ];
+  }
+
+  openSession() {
+    const urlParams = document.location.href.split('?join=');
+    if (urlParams.length === 2) {
+      this.joinSession(urlParams[1]);
+    } else {
+      this.newSession();
+    }
+  }
+
+  newSession() {
+
+    const sock = new WebSocket("ws://localhost:4567/game?name=Fred")
+    sock.onmessage = (ev) => this.onMessageReceived(ev);
+    this.socket = sock;
+  }
+
+  joinSession(gameId) {
+    const sock = new WebSocket(`ws://localhost:4567/game?name=Johnny&gameId=${gameId}`)
+    sock.onmessage = (ev) => this.onMessageReceived(ev);
+
+    document.querySelector('.multiplayer').classList.add('hidden');
+    this.socket = sock;
   }
   
   setEventHandlers() {
@@ -38,6 +66,90 @@ class TicTacToe {
     
   }
 
+  onMessageReceived(event) {
+    const data = JSON.parse(event.data);
+    console.log(data);
+
+    this.playerId = data.playerId;
+    this.gameId = data.gameId;
+
+    if (data.action === 'session_created') {
+      this.onSessionStarted(data);
+    } else if (data.action === 'session_joined') {
+      this.onSessionJoined(data);
+    } else if (data.action === 'game_ready') {
+      this.onGameReady(data);
+    } else if (data.action === 'play') {
+      this.onRemotePlay(data);
+    } else if (data.action === 'finished') {
+      this.onFinishGame(data);
+    }
+  }
+
+  onSessionStarted(data) {
+    if (data.gameId) {
+      document.querySelector('.multiplayer-url').innerText = `http://localhost:8080/?join=${data.gameId}`;
+    }
+
+    if (data.firstPlayer) {
+      this.setPlayerName(1, data.firstPlayer);
+    }
+  }
+
+  onSessionJoined(data) {
+
+  }
+
+  onGameReady(data) {
+
+    document.querySelector('.multiplayer').classList.add('hidden');
+    
+    if (data.firstPlayer) {
+      this.setPlayerName(1, data.firstPlayer);
+    }
+
+    if (data.secondPlayer) {
+      this.setPlayerName(2, data.secondPlayer);
+    }
+
+    this.setPlayerTurn(data.playerTurn);
+
+  }
+
+  onRemotePlay(data) {
+    const session = new GameSession(data);
+    this.updateSession(session);
+  }
+
+  updateSession(data) {
+
+    if (data.firstPlayer) {
+      this.setPlayerName(1, data.firstPlayer);
+    }
+
+    if (data.secondPlayer) {
+      this.setPlayerName(2, data.secondPlayer);
+    }
+
+    this.setPlayerTurn(data.playerTurn);
+
+    if (data.moves) {
+      Object.keys(data.moves).forEach(i => {
+        this.setIsEntryPlayed(this.entries[i], true, data.moves[i]);
+      });
+    }
+
+  }
+
+  onFinishGame(data) {
+    console.log('Game finished');
+    console.log(data);
+  }
+
+  setPlayerTurn(player) {
+    this.playerTurn = player === 1 ? this.players.CROSS : this.players.CIRCLE;
+  }
+
   setPlayerTypes() {
     // Set player names and player side
     this.playerNames = ['Player 1', 'Player 2'];
@@ -50,6 +162,12 @@ class TicTacToe {
    */
   onEntryClick(entry) {
     
+    if (this.socket) {
+      const data = {action: 'play', playerId: this.playerId, gameId: this.gameId, move: entry.index};
+      console.log('Sending...', data);
+      this.socket.send(JSON.stringify(data));
+      return;
+    }
     // if there is a winner or current entry already played do nothing
     if (this.winner !== null || entry.isPlayed) return false;
     
@@ -200,6 +318,7 @@ class TicTacToe {
     // if marking entry as played=true then also make sure we mark it with "X" or "O" for the current player
     if (value && player !== null) {
       const playerElement = this.getElementForPlayer(player);
+      entry.element.innerHTML = null;
       entry.element.appendChild(playerElement);
     }
   }
@@ -209,6 +328,10 @@ class TicTacToe {
     return line.map(index => {
       return this.entries.find(e => e.index === index);
     });
+  }
+
+  setPlayerName(player, name) {
+    document.querySelector(`.name-${player}`).innerText = name;
   }
   
   createEntries() {
@@ -228,5 +351,15 @@ class Entry {
     this.index = +entryElement.getAttribute('data-entry');
     this.isPlayed = false;
     this.playedBy = null;
+  }
+}
+
+class GameSession {
+  constructor(data) {
+    this.firstPlayer = data.firstPlayer;
+    this.secondPlayer = data.secondPlayer
+    this.gameId = data.gameId;
+    this.moves = data.moves;
+    this.playerTurn = data.playerTurn;
   }
 }

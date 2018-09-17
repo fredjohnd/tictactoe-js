@@ -40,6 +40,10 @@ body {
     cursor: pointer;
 }
 
+.multiplayer {
+  font-size: 12px;
+}
+
 .replay.show {
     visibility: visible;
 }
@@ -96,6 +100,10 @@ body {
 
 .elements {
     display: none;
+}
+
+.hidden {
+  display: none;
 }
 
 .option {
