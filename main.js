@@ -9,7 +9,6 @@ class TicTacToe {
     // Set default values
     this.winner = null;
     this.playerId = null;
-
     this.entries = this.createEntries();
     
     this.elements = this.getPlayerElements();
@@ -38,14 +37,21 @@ class TicTacToe {
   }
 
   newSession() {
-
-    const sock = new WebSocket("ws://localhost:4567/game?name=Fred")
+    const playerName = window.prompt("Player name") || 'Player 1';
+    const sock = new WebSocket(`ws://localhost:4567/game?name=${playerName}`);
     sock.onmessage = (ev) => this.onMessageReceived(ev);
-    this.socket = sock;
+    sock.onerror = (ev) => {
+     document.querySelector('.multiplayer').classList.add('hidden'); 
+    }
+    sock.onopen = (ev) => {
+      this.socket = sock;
+    };
+
   }
 
   joinSession(gameId) {
-    const sock = new WebSocket(`ws://localhost:4567/game?name=Johnny&gameId=${gameId}`)
+    const playerName = window.prompt("Player name") || "Player 2";
+    const sock = new WebSocket(`ws://localhost:4567/game?name=${playerName}&gameId=${gameId}`)
     sock.onmessage = (ev) => this.onMessageReceived(ev);
 
     document.querySelector('.multiplayer').classList.add('hidden');
@@ -62,16 +68,16 @@ class TicTacToe {
     })
     
     // handle click event on .replay element to reset game
-    document.querySelector('.replay').addEventListener('click', () => this.resetGame());
     
+    document.querySelector('.replay').addEventListener('click', () => this.onResetRequest());
   }
 
   onMessageReceived(event) {
     const data = JSON.parse(event.data);
     console.log(data);
 
-    this.playerId = data.playerId;
-    this.gameId = data.gameId;
+    this.playerId = data.playerId || this.playerId;
+    this.gameId = data.gameId || this.gameId;
 
     if (data.action === 'session_created') {
       this.onSessionStarted(data);
@@ -81,7 +87,12 @@ class TicTacToe {
       this.onGameReady(data);
     } else if (data.action === 'play') {
       this.onRemotePlay(data);
-    } else if (data.action === 'finished') {
+    } else if (data.action === 'restart') {
+      this.onRestart(data);
+    } else if (data.action === 'waiting_player') {
+      alert('Waiting for player 2 to join');
+      return;
+    }else if (data.action === 'finished') {
       this.onFinishGame(data);
     }
   }
@@ -103,7 +114,7 @@ class TicTacToe {
   onGameReady(data) {
 
     document.querySelector('.multiplayer').classList.add('hidden');
-    
+    document.querySelector('.replay').classList.remove("hidden");
     if (data.firstPlayer) {
       this.setPlayerName(1, data.firstPlayer);
     }
@@ -116,6 +127,9 @@ class TicTacToe {
 
   }
 
+  onRestart(data) {
+    this.resetGame();
+  }
   onRemotePlay(data) {
     const session = new GameSession(data);
     this.updateSession(session);
@@ -144,6 +158,10 @@ class TicTacToe {
   onFinishGame(data) {
     console.log('Game finished');
     console.log(data);
+    if (data.hasWinner) {
+      this.winner = data.winningPlayer;
+    }
+    this.finishGame(data.winningPattern);
   }
 
   setPlayerTurn(player) {
@@ -288,6 +306,15 @@ class TicTacToe {
       entries.forEach(e => e.element.classList.remove('entry--highlighted'));
     }
   }
+
+  onResetRequest() {
+    if (this.socket) {
+      const data = {action: 'restart', gameId: this.gameId, playerId: this.playerId};
+      this.socket.send(JSON.stringify(data));
+    } else {
+      this.resetGame();
+    }
+  }
   
   resetGame() {
     
@@ -307,7 +334,10 @@ class TicTacToe {
     });
 
     // Triger next player
-    this.nextPlayer();
+
+    if (!this.socket) {
+      this.nextPlayer();
+    }
   }
   
   setIsEntryPlayed(entry, value, player = null) {
