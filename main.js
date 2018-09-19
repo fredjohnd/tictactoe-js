@@ -165,7 +165,18 @@ class TicTacToe {
   }
 
   setPlayerTurn(player) {
-    this.playerTurn = player === 1 ? this.players.CROSS : this.players.CIRCLE;
+
+    // Get board for each player
+    const sides = document.querySelectorAll('.scoreboard-content');
+
+    // Highlight the current player's board to indicate it's their move
+    Array.from(sides).forEach(side => {
+      if (parseInt(side.getAttribute('data-player'), 10) === player) {
+        side.setAttribute('current-play', true);
+      } else {
+        side.setAttribute('current-play', false);
+      }
+    });
   }
 
   setPlayerTypes() {
