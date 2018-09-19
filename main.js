@@ -2,6 +2,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
   window.game = new TicTacToe();
 });
 
+const ACTIONS = {SESSION_CREATED: 0, WAITING_PLAYER: 1, GAME_READY: 2, PLAY: 3, RESTART: 4, FINISHED: 5};
+
 class TicTacToe {
   
   constructor() {
@@ -19,7 +21,6 @@ class TicTacToe {
     this.setPlayerTypes();
     this.nextPlayer();
 
-    
     this.winningPatterns = [
       [0, 1, 2], [3, 4, 5], [6, 7, 8],
       [0, 3, 6], [1, 4, 7], [2, 5, 8],
@@ -79,20 +80,18 @@ class TicTacToe {
     this.playerId = data.playerId || this.playerId;
     this.gameId = data.gameId || this.gameId;
 
-    if (data.action === 'session_created') {
+    if (data.action === ACTIONS.SESSION_CREATED) {
       this.onSessionStarted(data);
-    } else if (data.action === 'session_joined') {
-      this.onSessionJoined(data);
-    } else if (data.action === 'game_ready') {
+    } else if (data.action === ACTIONS.GAME_READY) {
       this.onGameReady(data);
-    } else if (data.action === 'play') {
+    } else if (data.action === ACTIONS.PLAY) {
       this.onRemotePlay(data);
-    } else if (data.action === 'restart') {
+    } else if (data.action === ACTIONS.RESTART) {
       this.onRestart(data);
-    } else if (data.action === 'waiting_player') {
+    } else if (data.action === ACTIONS.WAITING_PLAYER) {
       alert('Waiting for player 2 to join');
       return;
-    }else if (data.action === 'finished') {
+    }else if (data.action === ACTIONS.FINISHED) {
       this.onFinishGame(data);
     }
   }
@@ -105,10 +104,6 @@ class TicTacToe {
     if (data.firstPlayer) {
       this.setPlayerName(1, data.firstPlayer);
     }
-  }
-
-  onSessionJoined(data) {
-
   }
 
   onGameReady(data) {
@@ -192,7 +187,7 @@ class TicTacToe {
   onEntryClick(entry) {
     
     if (this.socket) {
-      const data = {action: 'play', playerId: this.playerId, gameId: this.gameId, move: entry.index};
+      const data = {action: ACTIONS.PLAY, playerId: this.playerId, gameId: this.gameId, move: entry.index};
       console.log('Sending...', data);
       this.socket.send(JSON.stringify(data));
       return;
@@ -320,7 +315,7 @@ class TicTacToe {
 
   onResetRequest() {
     if (this.socket) {
-      const data = {action: 'restart', gameId: this.gameId, playerId: this.playerId};
+      const data = {action: ACTIONS.RESTART, gameId: this.gameId, playerId: this.playerId};
       this.socket.send(JSON.stringify(data));
     } else {
       this.resetGame();
